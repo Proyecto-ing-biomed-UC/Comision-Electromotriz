@@ -1,2 +1,2 @@
-# Comision-Electromotriz
-Trabajando en todo el setup eléctrico para la pierna biónica (electrónica, energización, electro-movilidad, control automático y navegación)!
+# Control Automático Ciervo
+El archivo mov_simple.ino es el código básico que cambia periódicamente de dirección.
