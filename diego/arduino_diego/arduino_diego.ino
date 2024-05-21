@@ -3,10 +3,16 @@ const int stepPin = 5; // pulsos que determinan el movimiento del motor, cada pu
 const int dirPin = 2; // dirección de rotación
 const int enPin = 8; // habilitar o deshabilitar el driver del motor paso a paso
 const int buttonPin = 10; // detectar estado de boton
+// const int encoderPinA = 2; // encoder A
+// const int encoderPinB = 3; // encoder B
+// volatile long encoderPos = 0; // posicion encoder
 
 // inicio del programa (configurar pines y ajustes)
 void setup() {
   pinMode(buttonPin, INPUT);
+  // pinMode(encoderPinA, INPUT);
+  // pinMode(encoderPinB, INPUT);
+  // attachInterrupt(digitalPinToInterrupt(encoderPinA), updateEncoder, CHANGE);
   pinMode(stepPin,OUTPUT); 
   pinMode(dirPin,OUTPUT);
   pinMode(enPin,OUTPUT);
@@ -17,6 +23,8 @@ void setup() {
 // bucle de ejecucion infinito
 void loop() {
   int buttonState = digitalRead(buttonPin); // boton del hombre muerto
+  // Serial.print("ENC:");
+  // Serial.print(encoderPos);
   if (buttonState == LOW) {
     if (Serial.available() > 0) {
     int steps = Serial.parseInt();  // Leer el número de pasos
