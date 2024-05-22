@@ -6,7 +6,7 @@ import threading
 # Configurar la conexión serial
 # puerto: cambia segun el sistema operativo y puerto
 # window: COM3, linux: /dev/ttyUSB0, mac: 
-arduino_port = 'COM3'
+arduino_port = 'COM7'
 baud_rate = 9600 # velocidad de transmisión en baudios
 ser = serial.Serial(arduino_port, baud_rate)
 time.sleep(2)  # esperar a que la conexión serial se establezca
