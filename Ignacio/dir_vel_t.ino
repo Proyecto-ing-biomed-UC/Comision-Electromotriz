@@ -52,6 +52,7 @@ void loop() {
         Serial.println();
 
         digitalWrite(dirPin, directionForward ? HIGH : LOW); // Set direction
+        digitalWrite(enPin, LOW); // Enable the motor
 
         if (type == 'T') {
           // Move for the specified time in seconds
@@ -72,6 +73,8 @@ void loop() {
             delayMicroseconds(pd); 
           }
         }
+        
+        digitalWrite(enPin, HIGH); // Disable the motor to reduce noise when not in use
       }
     }
   }
