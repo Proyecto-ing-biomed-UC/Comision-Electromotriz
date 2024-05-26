@@ -2,15 +2,22 @@ import serial
 import time
 
 # Configurar la conexión serial
-arduino_port = 'COM4'
+arduino_port = 'COM4'  # Asegúrate de que este sea el puerto correcto
 baud_rate = 9600  # Velocidad de transmisión en baudios
-ser = serial.Serial(arduino_port, baud_rate)
-time.sleep(2)  # Esperar a que la conexión serial se establezca
+try:
+    ser = serial.Serial(arduino_port, baud_rate)
+    time.sleep(2)  # Esperar a que la conexión serial se establezca
+except serial.SerialException as e:
+    print(f"Error al abrir el puerto serial: {e}")
+    exit()
 
 # Función para enviar comandos al Arduino
 def send_command(command):
-    ser.write((command + '\n').encode('utf-8'))
-    print("Comando enviado:", command)
+    try:
+        ser.write((command + '\n').encode('utf-8'))  # Asegurarse de agregar un salto de línea
+        print("Comando enviado:", command)
+    except serial.SerialException as e:
+        print(f"Error al enviar el comando: {e}")
 
 # Ejemplo de uso: enviar comandos al Arduino
 try:
@@ -24,4 +31,3 @@ except KeyboardInterrupt:
     print("\nPrograma interrumpido.")
 finally:
     ser.close()  # Cerrar la conexión serial al finalizar
-
