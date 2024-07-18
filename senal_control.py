@@ -15,7 +15,18 @@ time.sleep(2)  # esperar a que la conexión serial se establezca
 def send_data():
     steps = steps_entry.get()
     direction = direction_var.get()
+    print(steps, direction)
     ser.write(f"{steps} {direction}\n".encode('utf-8'))
+
+def read_serial(ser):
+    while True:
+        if ser.in_waiting > 0:
+            message = ser.readline().decode('utf-8').rstrip()  # Lee el mensaje
+            print(message)  # Muestra el mensaje
+
+thread = threading.Thread(target=read_serial, args=(ser,))
+thread.daemon = True  # Permite que el hilo se cierre al cerrar el programa
+thread.start()
 
 # Función para actualizar los datos del sensor
 #def update_sensor_data():
@@ -49,11 +60,11 @@ direction_var = tk.IntVar()
 direction_var.set(0)
 
 # Botón de radio para la dirección hacia adelante
-forward_radio = tk.Radiobutton(root, text="Adelante", variable=direction_var, value=0)
+forward_radio = tk.Radiobutton(root, text="Atras", variable=direction_var, value=0)
 forward_radio.grid(row=1, column=1, padx=10, pady=5)
 
 # Botón de radio para la dirección hacia atrás
-backward_radio = tk.Radiobutton(root, text="Atrás", variable=direction_var, value=1)
+backward_radio = tk.Radiobutton(root, text="Adelante", variable=direction_var, value=1)
 backward_radio.grid(row=1, column=2, padx=10, pady=5)
 
 # Botón para enviar los datos al Arduino
