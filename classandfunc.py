@@ -1,11 +1,11 @@
 # control discreto PID
 class PIDControl:
-    def __init__(self, Kpa, Kia, Kda, dt=1):
+    def __init__(self, Kp, Ki, Kd, dt=1):
         self.dt = dt # periodo de muestreo
         # constantes controlador de angulo discreto
-        self.Kp = Kpa
-        self.Ki = Kia*dt
-        self.Kd = Kda/dt
+        self.Kp = Kp
+        self.Ki = Ki*dt
+        self.Kd = Kd/dt
         # errores previos
         self.prev_err1 = 0
         self.prev_err2 = 0
@@ -14,9 +14,9 @@ class PIDControl:
 
     def calcular_control(self, err):
         # controlador
-        u = self.prev_u_a + (self.Kp + self.Ki + self.Kd)*err - (self.Kp + 2*self.Kd)*self.prev_err1_a + self.Kd*self.prev_err2_a
+        u = self.prev_u + (self.Kp + self.Ki + self.Kd)*err - (self.Kp + 2*self.Kd)*self.prev_err1 + self.Kd*self.prev_err2
         # actualizacion de parametros
-        self.prev_err2_a = self.prev_err1_a
-        self.prev_err1_a = err
-        self.prev_u_a = u
+        self.prev_err2 = self.prev_err1
+        self.prev_err1 = err
+        self.prev_u = u
         return u
