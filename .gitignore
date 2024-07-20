@@ -3,3 +3,4 @@ __pycache__/
 otro_ejemplo/
 *.docx
 guardar_codigo.py
+dataset.csv

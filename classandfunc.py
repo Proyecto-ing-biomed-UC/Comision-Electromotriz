@@ -1,6 +1,7 @@
 import serial
 import tkinter as tk # interfaz de usuario
 from functools import partial
+import pandas as pd
 
 # control discreto PID
 class PIDControl:
@@ -69,11 +70,6 @@ def control_manual(ser):
     # Iniciar el bucle de eventos
     root.mainloop()
 
-# enviar datos al Arduino
-def send_data_control(velocidad, direccion, ser):
-    #print("Velocidad de control:", velocidad, "Dirección:", direccion)
-    ser.write(f"<{velocidad},{direccion}>".encode('utf-8'))
-
 
 # enviar datos al Arduino
 def send_data(ser):
@@ -81,3 +77,7 @@ def send_data(ser):
     velocidad = vel_entry.get()
     direccion = dir_entry.get()
     ser.write(f"<{velocidad},{direccion}>".encode('utf-8'))
+
+def lectura_referencia(nombre_archivo):
+    datos = pd.read_csv(nombre_archivo, header=None)
+    return datos

@@ -13,6 +13,7 @@ int angle = 0; // angulo calculado
 
 int speed = 0;
 int direction = 0;
+const unsigned long TIMEOUT = 1000;
 
 void setup(){
  Serial.begin(9600); // Inicializar el serial del hardware para depuración
@@ -25,6 +26,8 @@ void loop(){
  Serial.println(angle);
  //float error = sensorValue - ref
  //float control = pidControl.calcular_control(error);
+ unsigned long startTime = millis();
+ while (millis() - startTime < TIMEOUT) {
  if (Serial.available() > 0) {
     String mensaje = Serial.readStringUntil('>');
     if (mensaje.startsWith("<")) {
@@ -53,6 +56,7 @@ void loop(){
     }
     }
  }
+}
 }
 
 void modulaPWM(int pin, int dutyCycle, int periodo) {
