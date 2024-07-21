@@ -2,10 +2,12 @@ import serial
 import tkinter as tk # interfaz de usuario
 from functools import partial
 import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
 
 # control discreto PID
 class PIDControl:
-    def __init__(self, Kp, Ki, Kd, dt=1):
+    def __init__(self, Kp, Ki, Kd, serie, dt=1):
         self.dt = dt # periodo de muestreo
         # constantes controlador de angulo discreto
         self.Kp = Kp
@@ -17,14 +19,37 @@ class PIDControl:
         # entrada previa discretizacion via retencion de orden 0
         self.prev_u = 0
 
-    def calcular_control(self, err):
-        # controlador
-        u = self.prev_u + (self.Kp + self.Ki + self.Kd)*err - (self.Kp + 2*self.Kd)*self.prev_err1 + self.Kd*self.prev_err2
-        # actualizacion de parametros
-        self.prev_err2 = self.prev_err1
-        self.prev_err1 = err
-        self.prev_u = u
-        return u
+        # 
+        self.estado_ant = None
+        self.ser = serie
+        self.verifica = False
+
+    def calcular_control(self, referencia, estado):
+        if self.verifica != False:
+            estado_velocidad = (self.estado_ant - estado)/self.dt
+            # calculo error y logica de control
+            error_vel = referencia[1] - estado_velocidad
+            error_pos = referencia[0] - estado
+            if error_vel >= 0:
+                direccion = 0 # hacia atras
+            else:
+                direccion = 1 # hacia delante
+            err = np.abs(error_vel)
+            # controlador
+            u = self.prev_u + (self.Kp + self.Ki + self.Kd)*err - (self.Kp + 2*self.Kd)*self.prev_err1 + self.Kd*self.prev_err2
+            # actualizacion de parametros
+            self.prev_err2 = self.prev_err1
+            self.prev_err1 = err
+            self.prev_u = u
+            self.send_data_control(u, direccion)
+        self.estado_ant = estado
+        self.verifica = True
+
+        return
+    # enviar datos al Arduino
+    def send_data_control(self, velocidad, direccion):
+        print("Velocidad de control:", velocidad, "Dirección:", direccion)
+        self.ser.write(f"<{velocidad},{direccion}>".encode('utf-8'))
 
 def control_manual(ser):
     global vel_entry, dir_entry
@@ -81,3 +106,36 @@ def send_data(ser):
 def lectura_referencia(nombre_archivo):
     datos = pd.read_csv(nombre_archivo, header=None)
     return datos
+
+
+if __name__ == '__main__':
+    dt = 0.01
+    data = lectura_referencia('dataset.csv')
+    angulos = data[0].tolist()
+    vel_angular = np.gradient(angulos, dt)
+    tiempo = np.arange(len(angulos))*dt
+    # Graficar ángulos y velocidad angular
+    plt.figure(figsize=(12, 6))
+
+    # Gráfico de ángulos
+    plt.subplot(2, 1, 1)
+    plt.plot(tiempo, angulos, label='Ángulo')
+    plt.xlabel('Tiempo (s)')
+    plt.ylabel('Ángulo (rad)')
+    plt.title('Ángulos en función del tiempo')
+    plt.legend()
+    plt.grid(True)
+
+    # Gráfico de velocidad angular
+    plt.subplot(2, 1, 2)
+    plt.plot(tiempo[:-1], vel_angular[:-1], label='Velocidad Angular', color='orange')
+    plt.xlabel('Tiempo (s)')
+    plt.ylabel('Velocidad Angular (rad/s)')
+    plt.title('Velocidad Angular en función del tiempo')
+    plt.legend()
+    plt.grid(True)
+
+    plt.tight_layout()
+    plt.show()
+
+    

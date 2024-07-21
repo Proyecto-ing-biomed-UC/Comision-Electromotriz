@@ -1,7 +1,7 @@
 # Control Automático Ciervo
 Orientado a desarrollar el software de control de la protesis con descripción del hardware utilizado
 
-# A continuación se detallas los archivos:
+# A continuación se detallan los archivos:
 ## main_control.py
 Programa principal de ejecución del algoritmo de control
 
