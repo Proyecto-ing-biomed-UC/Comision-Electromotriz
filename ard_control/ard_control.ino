@@ -13,7 +13,7 @@ int angle = 0; // angulo calculado
 
 int speed = 0;
 int direction = 0;
-const unsigned long TIMEOUT = 500;
+const unsigned long TIMEOUT = 1000;
 
 void setup(){
  Serial.begin(9600); // Inicializar el serial del hardware para depuración
@@ -22,8 +22,7 @@ void setup(){
 }
 void loop(){
  potvalue = analogRead(SENSOR_PIN);  // Leer el valor del potenciómetro
- //angle = map(potvalue, 0, 1000, 0, 360);  // Mapear el valor a un rango de ángulos
- angle = map(potvalue, 320, 916, 0, 180);  // Mapear el valor a un rango de ángulos
+ angle = map(potvalue, 0, 1000, 0, 360);  // Mapear el valor a un rango de ángulos
  Serial.println(angle);
  //float error = sensorValue - ref
  //float control = pidControl.calcular_control(error);
