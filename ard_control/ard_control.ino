@@ -13,7 +13,7 @@ int angle = 0; // angulo calculado
 
 int speed = 0;
 int direction = 0;
-const unsigned long TIMEOUT = 1000;
+const unsigned long TIMEOUT = 500;
 
 void setup(){
  Serial.begin(9600); // Inicializar el serial del hardware para depuración

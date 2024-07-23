@@ -1,6 +1,4 @@
 __pycache__/
 .vscode/
 otro_ejemplo/
-*.docx
 guardar_codigo.py
-dataset.csv
