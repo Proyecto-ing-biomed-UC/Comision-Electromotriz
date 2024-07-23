@@ -37,6 +37,7 @@ if __name__ == '__main__':
                 # se envian otros mensajes en el debug
                 #print(estado)
                 referencia = [data[tiempo_referencia], velocidad[tiempo_referencia]]
+                referencia = [100, 0]
                 if estado.isdigit():
                     print(estado)
                     controlador_vel_pos.calcular_control(referencia, int(estado))
