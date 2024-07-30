@@ -20,44 +20,82 @@ class PIDControl:
         self.prev_u = 0
 
         # 
-        self.estado_ant = None
         self.ser = serie
         self.verifica = False
 
+        # filtro promedio
+        self.estado = None
+        self.estado_ant1 = 0
+        self.estado_ant2 = 0
+        self.estado_ant3 = 0
+        self.estado_ant4 = 0
+        self.conteo = 0
+
     def calcular_control(self, referencia, estado):
         if self.verifica != False:
-            estado_velocidad = (self.estado_ant - estado)/self.dt
+            estado_velocidad = (self.estado_ant1 - estado)/self.dt
             # calculo error y logica de control
             error_vel = referencia[1] - estado_velocidad
             error_pos = referencia[0] - estado
             if error_pos >= 0:
-                direccion = 0 # hacia atras
+                direccion = 1 # hacia atras
             else:
-                direccion = 1 # hacia delante
-            err = np.abs(error_pos)
+                direccion = 0 # hacia delante
+            #print("error_pos", error_pos)
+            err = error_pos
             # controlador
             u = self.prev_u + (self.Kp + self.Ki + self.Kd)*err - (self.Kp + 2*self.Kd)*self.prev_err1 + self.Kd*self.prev_err2
+            #u = self.prev_u + (self.Kp + self.Ki + self.Kd)*err
             # actualizacion de parametros
-            #if u > 0:
+            #print("u", u)
+            #if u >= 0:
             #    direccion = 0
             #else:
             #    direccion = 1
                 
             u = np.abs(u)
+            if u > 255:
+                u = 255
+            elif u < 0:
+                u = 0
             
             self.prev_err2 = self.prev_err1
             self.prev_err1 = err
             self.prev_u = u
-            self.send_data_control(u, direccion)
-        self.estado_ant = estado
+            self.send_data_control(int(u), direccion)
         self.verifica = True
-
+        self.conteo += 1
+        self.estado_ant4 = self.estado_ant3
+        self.estado_ant3 = self.estado_ant2
+        self.estado_ant2 = self.estado_ant1
+        self.estado_ant1 = estado
         return
     # enviar datos al Arduino
     def send_data_control(self, velocidad, direccion):
         print("Velocidad de control:", velocidad, "Dirección:", direccion)
         self.ser.write(f"<{velocidad},{direccion}>".encode('utf-8'))
 
+def filtro_estado(controlador_vel_pos, estado):
+    estados = controlador_vel_pos.conteo
+    if estados == 0:
+        div = 1
+        estado = estado/div
+    elif estados == 1:
+        div = 2
+        print("estado filtro:", estado, controlador_vel_pos.estado_ant1)
+        estado = (estado + controlador_vel_pos.estado_ant1)/div
+    elif estados == 2:
+        div = 3
+        estado = (estado + controlador_vel_pos.estado_ant1 + controlador_vel_pos.estado_ant2)/div
+    elif estados == 3:
+        div = 4
+        estado = (estado + controlador_vel_pos.estado_ant1 + controlador_vel_pos.estado_ant2 + controlador_vel_pos.estado_ant3)/div
+    elif estados >= 4:
+        div = 5
+        estado = (estado + controlador_vel_pos.estado_ant1 + controlador_vel_pos.estado_ant2 + controlador_vel_pos.estado_ant3 + controlador_vel_pos.estado_ant4)/div
+    #print("estado filtro:", estado)
+    return estado
+        
 def control_manual(ser):
     global vel_entry, dir_entry
     # ventana principal
@@ -79,11 +117,11 @@ def control_manual(ser):
     dir_entry.set(0)
 
     # Botón de radio para la dirección hacia adelante
-    forward_radio = tk.Radiobutton(root, text="Atras", variable=dir_entry, value=0)
+    forward_radio = tk.Radiobutton(root, text="Estirar", variable=dir_entry, value=0)
     forward_radio.grid(row=1, column=1, padx=10, pady=5)
 
     # Botón de radio para la dirección hacia atrás
-    backward_radio = tk.Radiobutton(root, text="Adelante", variable=dir_entry, value=1)
+    backward_radio = tk.Radiobutton(root, text="Flectar", variable=dir_entry, value=1)
     backward_radio.grid(row=1, column=2, padx=10, pady=5)
 
     # Botón para enviar los datos al Arduino
@@ -108,6 +146,7 @@ def send_data(ser):
     global vel_entry, dir_entry
     velocidad = vel_entry.get()
     direccion = dir_entry.get()
+    print(velocidad, direccion)
     ser.write(f"<{velocidad},{direccion}>".encode('utf-8'))
 
 def lectura_referencia(nombre_archivo):

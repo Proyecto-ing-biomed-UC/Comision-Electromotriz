@@ -23,7 +23,7 @@ void setup(){
 void loop(){
  potvalue = analogRead(SENSOR_PIN);  // Leer el valor del potenciómetro
  //angle = map(potvalue, 0, 1000, 0, 360);  // Mapear el valor a un rango de ángulos
- angle = map(potvalue, 0, 1023, 0, 360);  // Mapear el valor a un rango de ángulos
+ angle = map(potvalue, 320, 916, 0, 180);  // Mapear el valor a un rango de ángulos
  Serial.println(angle);
  //float error = sensorValue - ref
  //float control = pidControl.calcular_control(error);
@@ -39,10 +39,10 @@ void loop(){
         int direction = mensaje.substring(comaIndex + 1).toInt();
     //int speed = Serial.parseInt(); // velocidad
     //int direction = Serial.parseInt(); // direccion
-    Serial.print("Velocidad recibida: ");
-    Serial.println(speed);
-    Serial.print("Direccion recibida: ");
-    Serial.println(direction);
+    //Serial.print("Velocidad recibida: ");
+    //Serial.println(speed);
+    //Serial.print("Direccion recibida: ");
+    //Serial.println(direction);
     //Serial.println(speed);
     //Serial.println(direction);
     if (direction == 0){
@@ -58,15 +58,4 @@ void loop(){
     }
  }
 }
-}
-
-void modulaPWM(int pin, int dutyCycle, int periodo) {
-  int tiempoAlto = (dutyCycle * periodo) / 100; // Tiempo en estado alto
-  int tiempoBajo = periodo - tiempoAlto; // Tiempo en estado bajo
-
-  analogWrite(pin, 100);
-  delayMicroseconds(tiempoAlto * 1000); // Mantiene en estado alto
-
-  analogWrite(pin, 0);
-  delayMicroseconds(tiempoBajo * 1000); // Mantiene en estado bajo
 }
