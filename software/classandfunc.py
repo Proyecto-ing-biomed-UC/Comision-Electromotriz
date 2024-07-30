@@ -38,10 +38,10 @@ class PIDControl:
             # controlador
             u = self.prev_u + (self.Kp + self.Ki + self.Kd)*err - (self.Kp + 2*self.Kd)*self.prev_err1 + self.Kd*self.prev_err2
             # actualizacion de parametros
-            if u > 0:
-                direccion = 0
-            else:
-                direccion = 1
+            #if u > 0:
+            #    direccion = 0
+            #else:
+            #    direccion = 1
                 
             u = np.abs(u)
             
