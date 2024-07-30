@@ -30,7 +30,7 @@ class PIDControl:
             # calculo error y logica de control
             error_vel = referencia[1] - estado_velocidad
             error_pos = referencia[0] - estado
-            if error_vel >= 0:
+            if error_pos >= 0:
                 direccion = 0 # hacia atras
             else:
                 direccion = 1 # hacia delante
