@@ -11,9 +11,9 @@ int angle = 0; // angulo calculado
 //const int frecuencia = 50; // Frecuencia en Hz
 //const int periodo = 1000 / frecuencia; // Periodo en milisegundos
 
-int speed = 0;
+int speed = 0; // 0 - 255
 int direction = 0;
-const unsigned long TIMEOUT = 500;
+const unsigned long TIMEOUT = 1000;
 
 void setup(){
  Serial.begin(9600); // Inicializar el serial del hardware para depuración
@@ -22,9 +22,15 @@ void setup(){
 }
 void loop(){
  potvalue = analogRead(SENSOR_PIN);  // Leer el valor del potenciómetro
- //angle = map(potvalue, 0, 1000, 0, 360);  // Mapear el valor a un rango de ángulos
- angle = map(potvalue, 320, 916, 0, 180);  // Mapear el valor a un rango de ángulos
+ angle = map(potvalue, 0, 1000, 0, 360);  // Mapear el valor a un rango de ángulos
+ 
+ //angle = map(potvalue, 1023, 550, 180, 0);  // Mapear el valor a un rango de ángulos
+ //angle = map(potvalue, 1023, 400, 180, 0);  // Mapear el valor a un rango de ángulos
  Serial.println(angle);
+ Serial.print("Angulo:");
+ Serial.println(angle);
+ Serial.print("potvalue:");
+ Serial.println(potvalue);
  //float error = sensorValue - ref
  //float control = pidControl.calcular_control(error);
  unsigned long startTime = millis();
@@ -35,14 +41,14 @@ void loop(){
       mensaje.remove(0, 1); // Elimina el delimitador de inicio '<'
       int comaIndex = mensaje.indexOf(',');
       if (comaIndex != -1) {
-        int speed = mensaje.substring(0, comaIndex).toInt();
+        speed = mensaje.substring(0, comaIndex).toInt();
         int direction = mensaje.substring(comaIndex + 1).toInt();
     //int speed = Serial.parseInt(); // velocidad
     //int direction = Serial.parseInt(); // direccion
-    //Serial.print("Velocidad recibida: ");
-    //Serial.println(speed);
-    //Serial.print("Direccion recibida: ");
-    //Serial.println(direction);
+    Serial.print("Velocidad recibida: ");
+    Serial.println(speed);
+    Serial.print("Direccion recibida: ");
+    Serial.println(direction);
     //Serial.println(speed);
     //Serial.println(direction);
     if (direction == 0){

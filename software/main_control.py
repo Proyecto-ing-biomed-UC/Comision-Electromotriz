@@ -9,11 +9,11 @@ import sys
 # Configurar la conexión serial
 # puerto: cambia segun el sistema operativo y puerto
 # window: COM3, linux: /dev/ttyUSB0, mac: 
-arduino_port = 'COM12'
+arduino_port = 'COM3'
 baud_rate = 9600 # velocidad de transmisión en baudios
 ser = serial.Serial(arduino_port, baud_rate)
 time.sleep(2)  # esperar a que la conexión serial se establezca
-tipo_control = 0  # 0 manual, 1 automatico
+tipo_control = 0 # 0 manual, 1 automatico
 dt = 0.01
 
 def lectura():
